@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>WanLi6</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="PathNet摘要 GNN聚合函数的同质性假设限制了他们在异配图上的学习能力。 本文揭示了图中路径级别模式可以明确的反应丰富的语义和结构信息。 因此提出了一个新的结构感知路径聚合图神经网络（PathNet），以泛化GNN到同配和异配图。 首先，本文介绍了一个最大熵路径采样器，它可以帮助我们对包含结构上下文的多条路径进行采样。 然后，本文引入了一个结构感知的递归单元组成的顺序保持和距离感知组件学习的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WanLi6">
+<meta property="og:url" content="http://example.com/2023/10/12/PathNet/index.html">
+<meta property="og:site_name" content="WanLi6">
+<meta property="og:description" content="PathNet摘要 GNN聚合函数的同质性假设限制了他们在异配图上的学习能力。 本文揭示了图中路径级别模式可以明确的反应丰富的语义和结构信息。 因此提出了一个新的结构感知路径聚合图神经网络（PathNet），以泛化GNN到同配和异配图。 首先，本文介绍了一个最大熵路径采样器，它可以帮助我们对包含结构上下文的多条路径进行采样。 然后，本文引入了一个结构感知的递归单元组成的顺序保持和距离感知组件学习的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/8dd9039b63ba469eaee5694335286fac.png">
+<meta property="article:published_time" content="2023-10-12T12:06:58.551Z">
+<meta property="article:modified_time" content="2023-10-09T02:52:17.362Z">
+<meta property="article:author" content="Wan Li">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/8dd9039b63ba469eaee5694335286fac.png">
+  
+    <link rel="alternate" href="/atom.xml" title="WanLi6" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">WanLi6</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">���˲���</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-PathNet" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/12/PathNet/" class="article-date">
+  <time class="dt-published" datetime="2023-10-12T12:06:58.551Z" itemprop="datePublished">2023-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="PathNet"><a href="#PathNet" class="headerlink" title="PathNet"></a>PathNet</h1><h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><ul>
+<li>GNN聚合函数的同质性假设限制了他们在异配图上的学习能力。</li>
+<li>本文揭示了图中路径级别模式可以明确的反应丰富的语义和结构信息。</li>
+<li>因此提出了一个新的<strong>结构感知路径聚合</strong>图神经网络（PathNet），以泛化GNN到同配和异配图。</li>
+<li>首先，本文介绍了一个最大熵路径采样器，它可以帮助我们对包含结构上下文的多条路径进行采样。</li>
+<li>然后，本文引入了一个结构感知的递归单元组成的顺序保持和距离感知组件学习的语义信息的邻域。</li>
+<li>最后，对路径编码后不同路径对目标节点的偏好进行建模。</li>
+</ul>
+<h2 id="挑战"><a href="#挑战" class="headerlink" title="挑战"></a>挑战</h2><p>如何得到多个路径并编码正确的路径以获取足够的信息是极具挑战性的。</p>
+<ol>
+<li>如何定义一个适当的采样器，可以避免过度膨胀的问题，同时保留有意义的结构信息</li>
+<li>如何设计一个次序保持的聚合器。现有的GNN聚合器对Path中的order不敏感</li>
+<li>如何捕捉路径对于不同节点的偏好</li>
+</ol>
+<p>本文中，提出了一种 <strong>结构感知路径聚合图神经网络</strong> 来解决这些问题。</p>
+<ol>
+<li>为了解决过度膨胀问题并保持结构，引入一个<strong>最大熵路径采样器</strong></li>
+<li>为了在保留高阶邻域上下文的同时对路径编码，引入一种<strong>结构感知路径编码器</strong>：具有以下优点<ol>
+<li>通过循环机制保留顺序</li>
+<li>通过利用到目标结点的结构来捕获上下文</li>
+</ol>
+</li>
+<li>在路径编码之后，提出一种<strong>路径注意力机制</strong>模拟具有不同邻域同质性水平的节点的路径偏好。</li>
+</ol>
+<h2 id="PathNet-1"><a href="#PathNet-1" class="headerlink" title="PathNet"></a>PathNet</h2><p><img src="https://img-blog.csdnimg.cn/8dd9039b63ba469eaee5694335286fac.png" alt="PathNet"></p>
+<p><strong>同配性和异配性</strong>：同质性的概念源于节点与其邻居具有相同类的倾向。</p>
+<p>同质性程度可以通过同质性边比例来定量描述：$h(\mathcal{G})&#x3D;\frac{|{(u,v){:}(u,v){\in}\mathcal{E}\wedge y_{u}&#x3D;y_{v}}|}{|\mathcal{E}|}$</p>
+<p>路径在表示图的复杂语义信息方面具有很大的潜力。</p>
+<h3 id="Maximal-Entropy-Path-Sampler"><a href="#Maximal-Entropy-Path-Sampler" class="headerlink" title="Maximal Entropy Path Sampler"></a>Maximal Entropy Path Sampler</h3><p>为了在考虑效率的情况下获得路径，需要像随机游走的采样策略。然而，传统的随机游走（CRW）的缺点是对不同的节点进行相同的处理，并且忽略了图中节点的中心性。为了解决这些问题，我们提出了在**最大熵随机游走(MERW)**的指导下对路径进行采样。</p>
+<p>MERW算法在每一步搜索过程中都是沿着熵率增加的方向搜索路径，并引入了被广泛应用于衡量节点重要性的<strong>特征向量中心度</strong>。</p>
+<p>图上随机游走的最大熵率 $\eta$ 可以从转移矩阵 $\mathcal{P}$ 和平稳分布 $\pi$ 计算，其可以描述如下：</p>
+<p>$$\eta&#x3D;-\sum_i\pi_i\sum_jp_{ij}\ln p_{ij} \quad(1)$$</p>
+<ul>
+<li>随机游走的最大熵值有界于 $\text{ln}\lambda$ ，其中 $\lambda$ 是矩阵 $\text{A}$ 的最大特征值</li>
+</ul>
+<p>为了最大化游走的熵率，MERW将转移概率构造为</p>
+<p>$p_{ij} &#x3D; \frac{A_{ij}u_j}{\lambda u_i}$</p>
+<ul>
+<li>$u&#x3D;(u_{1},u_{2},\cdots,u_{n})$ 为归一化的特征向量</li>
+</ul>
+<p>注意，转移概率与特征向量中心性成比例，从而保证MERW能够捕获图中节点的结构上下文。它可以被重新表示为最大熵转移（MET）矩阵，其被定义为</p>
+<p>$$\mathbf{P}_u&#x3D;\frac{\mathbf{D}_u^{-1}\mathbf{A}\mathbf{D}_u}{\lambda},\quad\quad\quad\quad\quad\quad(2)$$</p>
+<ul>
+<li>$$\mathbf{D}<em>{u}&#x3D;\mathrm{diag}(u</em>{1},u_{2},\cdots,u_{n})$$</li>
+<li>最大熵路径采样器不仅能最大化图的熵率，而且能获得图的复杂结构信息</li>
+</ul>
+<h3 id="结构感知路径聚合器"><a href="#结构感知路径聚合器" class="headerlink" title="结构感知路径聚合器"></a>结构感知路径聚合器</h3><p>为了聚合路径信息，本文提出了一个结构感知路径聚合器。</p>
+<p>具体来说，作者设计了一个结构化的递归单元来编码路径嵌入，它能够将路径中每个节点的<strong>顺序</strong>和<strong>距离</strong>信息结合起来，从而捕获语义信息。</p>
+<p>此外，本文的路径偏好模型，区分不同的路径的重要性，实现自适应路径嵌入聚合。</p>
+<h4 id="结构感知循环单元"><a href="#结构感知循环单元" class="headerlink" title="结构感知循环单元"></a>结构感知循环单元</h4><p>尽管传统GNN可以聚合高阶邻域的信息，但是它们由于使用同样的方式处理信息，并忽略了图中邻域的全局结构上下文，不可避免地导致了嵌入不可区分。</p>
+<p>本文主张每个节点的距离是通过路径捕获结构上下文的关键信息。</p>
+<p>本文提出了一个递归单元来编码路径序列，而不是独立地聚合每层节点，从而保留了每个节点的顺序信息。注意，在涉及结构信息之前，本文将所有节点特征 $\mathbf{X}$ 编码为节点嵌入 $\mathbf{I}$ ，其被描述为</p>
+<p>$$\mathbf I&#x3D;\sigma\left(\mathbf W_{\mathbf in}\mathbf X+\mathbf b_{\mathbf in}\right) \quad(3)$$</p>
+<p>为了捕获基于特征的扩散结构，我们构造结构感知的递归单元 $\Phi $ 为</p>
+<p>$$\begin{aligned}<br>&amp;&amp;\mathbf{r}<em>{j}&#x3D;\sigma\left(\mathbf{W}</em>{\mathbf{r}}\cdot h_{j-1}+\mathbf{U}<em>{\mathbf{d}}\cdot\mathbf{I}</em>{j}\right), \<br>&amp;&amp;\mathbf{f}<em>{j}&#x3D;\sigma\left(\mathbf{W}</em>{\mathbf{f}}\cdot h_{j-1}+\mathbf{U}<em>{\mathbf{d}}\cdot\mathbf{I}</em>{j}\right), \<br>&amp;&amp;\mathbf{o}<em>{j}&#x3D;\sigma\left(\mathbf{W</em>{o}}\cdot h_{j-1}+\mathbf{U_{d}}\cdot\mathbf{I}<em>{j}\right), \<br>&amp;&amp;\mathbf{g}</em>{j}&#x3D;\operatorname{tanh}\left(\mathbf{W}<em>{\mathbf{g}}\cdot h</em>{j-1}+\mathbf{U}<em>{\mathbf{d}}\cdot\mathbf{I}</em>{j}\right), \<br>&amp;&amp;\mathbf{c}<em>{j}&#x3D;\mathbf{f}</em>{j}\odot\mathbf{c}<em>{j-1}+\mathbf{r}</em>{j}\odot\mathbf{g}<em>{j}, \<br>&amp;&amp;\mathbf{h}</em>{j}&#x3D;\mathbf{o}<em>{t}\odot\mathrm{tanh}\left(\mathbf{c}</em>{j}\right), \<br>\end{aligned} \quad(4)$$</p>
+<ul>
+<li><p>$\mathbf{h}_j$ 代表节点 $v$ 在路径中第 $j$ 步的表示</p>
+</li>
+<li><p>$\odot$ 是哈达玛积</p>
+</li>
+<li><p>考虑到目标节点的贡献最大，输入顺序与路径的收集顺序相反</p>
+</li>
+</ul>
+<p>考虑到距离信息对结构模式的贡献，采用了<strong>基于节点距离的参数共享机制</strong>的路径嵌入计算。具体地，对于路径中的每个节点，我们使用预先计算的距目标节点的最短距离 $d$ 作为辅助信息，并且具有相同 $d$ 的节点在路径编码期间共享相同的 $\mathbf{U}_d$ ，以便将距离信息并入路径嵌入。</p>
+<h4 id="建模路径偏好"><a href="#建模路径偏好" class="headerlink" title="建模路径偏好"></a>建模路径偏好</h4><p>自然的，具有不同同质度水平的邻域具有不同的路径偏好。对于同质性邻域，临近目标节点的路径对于分类贡献更多。然后对于异质性邻域，探索更广泛的图结构是更好的。</p>
+<p>因此，我们为每个节点的路径偏好建模，即考虑不同的路径，并学习它们的重要性，以促进自适应嵌入聚合。</p>
+<p>具体来说，对于一个特定的路径 $p$ ,我们可以得到它的嵌入 $h_p$ , 然后与目标节点的嵌入 $\mathbf{I}<em>v$ 进行级联，作为通过可训练权重 $a$ 计算偏好系数 $s</em>{v,p}$ 的输入</p>
+<p>$$\boldsymbol{s}_{v,p}&#x3D;\text{SOFTMAX}\left(\delta\left(\boldsymbol{a}\left(\mathbf{I}_v|\mathbf{h}_p\right)\right)\right)\quad(5)$$</p>
+<p>$\delta$ 为 LeakyReLU </p>
+<p>最后，使用偏好系数 $s_{v,p}$ 权衡路径并获取最终的预测 $z_v$</p>
+<p>$$\mathbf{z}<em>v&#x3D;\sigma\left(\mathbf{W}</em>{\mathbf{out}}\left(\mathbf{I}<em>v|\sum_\limits{j\in p}s</em>{v,p}\mathbf{h}<em>p\right)+\mathbf{b}</em>{\mathbf{out}}\right)\quad(6)$$</p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/12/PathNet/" data-id="clnn4xje00004w0u236qh2j43" data-title="" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/10/12/SGNN/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/10/12/SUGRL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/SGNN/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/PathNet/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/GraphSAGE%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Wan Li<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

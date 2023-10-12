@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>WanLi6</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="基于图嵌入和图神经网络的社交网络影响力最大化方法贡献： 提出了一种新的使用struc2vec图嵌入和基于图神经网络的回归器的影响力最大化方法 将影响力最大化问题看作一个伪回归任务使深度学习和机器学习的方法可以应用到这个任务中 使用LSTM单元作为GNN中的邻域聚合器  方法概述： 影响力最大化问题中，一个很重要的部分是根据节点可能的影响力对节点进行排序。  这个可能的影响力形成了一组连续的值。因此">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WanLi6">
+<meta property="og:url" content="http://example.com/2023/10/12/SGNN/index.html">
+<meta property="og:site_name" content="WanLi6">
+<meta property="og:description" content="基于图嵌入和图神经网络的社交网络影响力最大化方法贡献： 提出了一种新的使用struc2vec图嵌入和基于图神经网络的回归器的影响力最大化方法 将影响力最大化问题看作一个伪回归任务使深度学习和机器学习的方法可以应用到这个任务中 使用LSTM单元作为GNN中的邻域聚合器  方法概述： 影响力最大化问题中，一个很重要的部分是根据节点可能的影响力对节点进行排序。  这个可能的影响力形成了一组连续的值。因此">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-12T12:06:58.553Z">
+<meta property="article:modified_time" content="2023-09-16T01:41:25.278Z">
+<meta property="article:author" content="Wan Li">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="WanLi6" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">WanLi6</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">���˲���</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-SGNN" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/12/SGNN/" class="article-date">
+  <time class="dt-published" datetime="2023-10-12T12:06:58.553Z" itemprop="datePublished">2023-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="基于图嵌入和图神经网络的社交网络影响力最大化方法"><a href="#基于图嵌入和图神经网络的社交网络影响力最大化方法" class="headerlink" title="基于图嵌入和图神经网络的社交网络影响力最大化方法"></a>基于图嵌入和图神经网络的社交网络影响力最大化方法</h1><h2 id="贡献："><a href="#贡献：" class="headerlink" title="贡献："></a>贡献：</h2><ul>
+<li>提出了一种新的使用<strong>struc2vec图嵌入</strong>和<strong>基于图神经网络的回归器</strong>的影响力最大化方法</li>
+<li>将影响力最大化问题看作一个<strong>伪回归任务</strong>使深度学习和机器学习的方法可以应用到这个任务中</li>
+<li>使用LSTM单元作为GNN中的邻域聚合器</li>
+</ul>
+<h2 id="方法概述："><a href="#方法概述：" class="headerlink" title="方法概述："></a>方法概述：</h2><ul>
+<li><p>影响力最大化问题中，一个很重要的部分是根据节点可能的影响力对节点进行排序。</p>
+</li>
+<li><p>这个可能的影响力形成了一组<strong>连续</strong>的值。因此，将影响最大化的问题解释为<strong>基于特定节点特征预测形成伪回归活动的连续值集的任务</strong>。</p>
+</li>
+<li><p>节点特征应保持网络中节点的<strong>结构特点及其拓扑特征</strong>。为了提取和处理这些节点特征，利用<strong>struc2vec节点嵌入</strong>方法来为网络的每个节点生成合适维度的特征向量。这简化了要在网络上执行的各种机器学习和深度学习任务的适用性。</p>
+</li>
+<li><p>生成的节点嵌入由GNN架构进一步处理。然后将这些处理后的嵌入传递到回归器上，以预测网络中的节点所实现的最终影响力扩散。</p>
+</li>
+<li><p>算法的<strong>基本功能</strong>是在<strong>训练网络</strong>上训练所提出的基于GNN的模型以获得模型参数，然后在<strong>目标网络</strong>上使用该训练模型来执行影响最大化。</p>
+</li>
+<li><p>通过计算信息扩散模型下训练网络的节点的个体影响来生成训练模型所需的标签。</p>
+</li>
+<li><p><strong>四个阶段：</strong></p>
+<ul>
+<li>生成标签</li>
+<li>通过嵌入生成特征</li>
+<li>通过GNN处理特征</li>
+<li>使用回归器预测影响力传播</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-标签生成"><a href="#1-标签生成" class="headerlink" title="1 标签生成"></a>1 标签生成</h2><p>在本研究中，将影响最大化问题解释为伪回归问题。然而，对于任何回归任务，我们都需要一组定义良好且连续的标签。</p>
+<p>沿着这些路线，我们还要求标签回归网络特征以进行训练。利用Barabasi-Albert（BA）合成网络的几个变体作为训练网络，训练我们的模型以进行影响最大化任务。</p>
+<p>沿着伪回归任务的想法，在SIR信息扩散模型下计算每个节点的影响力。该计算的影响力用于训练回归任务的SGNN模型的标签。</p>
+<p>表示如下：</p>
+<p>$$label^G:&#x3D;IDM(G(V,E))$$</p>
+<h2 id="2-使用struc2vec嵌入生成特征"><a href="#2-使用struc2vec嵌入生成特征" class="headerlink" title="2 使用struc2vec嵌入生成特征"></a>2 使用struc2vec嵌入生成特征</h2><p>大多数现实生活中的网络，如在线社交网络，都在不断发展，规模庞大，通常难以处理和分析。某些网络还关联特定的节点属性，但并非所有网络都是如此。为了解决这个困难，我们使用节点嵌入技术为每个网络生成节点属性。</p>
+<p>因此，我们的目标是提供一个通用的影响最大化框架，利用网络结构来生成网络中的节点的功能。作为这项工作的一部分，我们采用了基于struct2vec节点嵌入的方法来为网络中的每个节点生成低维向量。</p>
+<p>$$S&#x3D;struc2vec(G,d)$$</p>
+<p>节点v的嵌入表示为：</p>
+<p>$$s_v&#x3D;S[v],v\in V$$</p>
+<h2 id="3-使用GNN处理特征"><a href="#3-使用GNN处理特征" class="headerlink" title="3 使用GNN处理特征"></a>3 使用GNN处理特征</h2><p>基于图神经网络（GNN）的特征处理。使用图的节点之间的<strong>消息传递</strong>和<strong>邻域聚合</strong>来捕获图信息。它有助于表示来自具有任意深度的节点的邻域的信息，定义从该节点到形成邻域的跳数。</p>
+<p>通过struct2vec捕获的网络细节通过GNN架构进一步增强和增强。这有助于更好地说明网络节点的结构细节。GNN中的聚合器函数可以是参数的，也可以是非参数的。</p>
+<p>在我们的研究中，我们考虑了一个参数聚合函数，因为它通过不断更新学习参数的值来更深刻地捕捉网络的复杂结构，以获得更好的结果。GNN生成表示网络中每个节点v的特征的最终状态向量，如下所示。</p>
+<p>$$h_{v}&#x3D;f(s_{v},h_{\text{ne}[v]},s_{\text{ne}[v]}),v\in V$$</p>
+<ul>
+<li>$h_v$是最终的状态向量</li>
+<li>$s_v$是节点v生成的嵌入向量</li>
+<li>$h_{ne[v]}$是节点v邻居节点的最终状态向量</li>
+<li>$s_{ne[v]}$是节点v邻居节点的嵌入向量</li>
+<li>$f$是邻域聚合函数，此处使用LSTM</li>
+</ul>
+<p>逐层更新公式为：</p>
+<p>$$H^{i+1}:&#x3D;F(H^i,S)$$</p>
+<h2 id="4-使用一个回归器进行最终的影响力传播预测"><a href="#4-使用一个回归器进行最终的影响力传播预测" class="headerlink" title="4 使用一个回归器进行最终的影响力传播预测"></a>4 使用一个回归器进行最终的影响力传播预测</h2><p>通常，回归器用于输入数据点的一组特征，并在优化损失函数的同时生成一组连续值作为输出。</p>
+<p>回归器是所提出的SGNN架构中<strong>预测网络中可能的影响力大小</strong>的部分。在先前步骤由GNN产生的最终特征向量被送到回归器中。回归器使用<strong>均方误差</strong>作为损失函数。</p>
+<p>一旦被训练，整个模型就被用于对目标网络中的节点的可能影响力进行预测。回归器的工作是将影响力预测作为一组连续值。然后根据节点的预测影响对节点进行排列</p>
+<p>$$Inf_v&#x3D;o(h_v,s_v,\beta)$$</p>
+<p>$$loss&#x3D;\frac{\Sigma_{v&#x3D;1}^{|V|}(Calc_v-Inf_v)^2}2$$</p>
+<h4 id="训练和测试模型的过程如下"><a href="#训练和测试模型的过程如下" class="headerlink" title="训练和测试模型的过程如下"></a>训练和测试模型的过程如下</h4><p>$$trained_SGNN :&#x3D; SGNN(G^{train},S^{G^{train}},label^{G^{train}},f,o)$$</p>
+<p>$$Predicted_Influence :&#x3D; trained SGNN(G^{test},S^{G^{test}})$$</p>
+<p>$$Spread :&#x3D; trained SGNN(G^{test},S^{G^{test}},k)$$</p>
+<ul>
+<li>使用带标签的训练网络对模型进行训练</li>
+<li>使用训练好的模型在测试网络计算结点的影响力</li>
+<li>计算前k个节点的影响力传播</li>
+</ul>
+<h2 id="参数分析"><a href="#参数分析" class="headerlink" title="参数分析"></a>参数分析</h2><p>因为我们通过在一个网络上训练SGNN并在完全不同的网络上进行影响力预测。因此，我们执行参数分析以确定最佳训练网络。为此，我们在BA模型下创建了两组网络，分别用于训练和测试的$D^{Train}$和$D^{Test}$。通过在不同的训练网络上训练SGNN，SGNN的性能评估如下</p>
+<p>$$trained_SGNN:&#x3D;SGNN(D^{train}[i],S^{D^{train}[i]},label^{D^{train}[i]},f,o),i\in range(1,len(D^{train})),$$</p>
+<p>$$F(t_c)[{i}][{j}]:&#x3D;\sum_{k&#x3D;10\wedge k+&#x3D;5}^{k&#x3D;50}{\textit{trained SGNN}(D^{\text{test}} [ { j }],S^{\text{D}^{\text{test}} [  { j }]},k),j\in\text{range}(1,\text{len}(D^{\text{test}} ) ) }$$</p>
+<ul>
+<li>$F(t_c)[{i}][{j}]$代表最终的感染范围或者影响力扩散范围</li>
+</ul>
+<p>根据如下公式选择训练网络：</p>
+<p>$$Opt_Train:&#x3D;argmax\left{\sum_{j&#x3D;1}^{j&#x3D;len(D^{test})}\frac{F(t_c)[i][j]}{\sum_{q&#x3D;1}^{q&#x3D;len(D^{train})}F(t_c)[q][j]},i\in D^{train}\right}$$</p>
+<h2 id="总结和思考："><a href="#总结和思考：" class="headerlink" title="总结和思考："></a>总结和思考：</h2><h3 id="方法总结"><a href="#方法总结" class="headerlink" title="方法总结"></a>方法总结</h3><p>本文使用的方法核心为将<strong>影响力最大化问题转化为一个伪回归问题</strong></p>
+<ul>
+<li><p>回归问题中的标签：<strong>使用SIR模拟获取节点的影响力大小作为标签</strong></p>
+</li>
+<li><p>对于特征的处理:</p>
+<ul>
+<li><p>首先使用struc2vec生成节点的嵌入作为<strong>节点特征</strong></p>
+<ul>
+<li><p>struct2vec使用层次结构来度量不同尺度的节点相似性，并构造多层图来编码结构相似性并生成节点的结构上下文。最终通过结构上下文进行word2vec嵌入</p>
+</li>
+<li><p>由于struc2vec使用的层次结构信息,因此生成的嵌入可以很好的<strong>捕捉节点周围的拓扑结构信息</strong></p>
+</li>
+</ul>
+</li>
+<li><p>使用GNN处理上边生成的节点特征</p>
+<ul>
+<li>使用一个聚合器聚合 邻居的<em>最终状态向量</em>$h_{ne}$ , 邻居的嵌入向量$s_{ne}$, 自身的嵌入向量$h$ , 聚合后更新最终状态向量</li>
+<li>其中h的初始化文中没有提及, 此处使用了嵌入向量初始化最终状态向量</li>
+<li>这一步使用GNN处理, 可以<strong>聚合邻居节点的信息</strong>, 通过迭代在邻域上的聚合<strong>捕捉更加复杂的网络结构</strong>, 使用GNN也可以<strong>提高模型的泛化性</strong>, 提升在其他网络上的表现.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="创新点："><a href="#创新点：" class="headerlink" title="创新点："></a>创新点：</h3><h4 id="1-对影响力重叠问题做处理"><a href="#1-对影响力重叠问题做处理" class="headerlink" title="1. 对影响力重叠问题做处理"></a>1. 对影响力重叠问题做处理</h4><p>在该论文的方法中，最终寻找的影响力最大的种子节点集可能会出现聚集的现象，导致影响力重叠问题。</p>
+<p>可以在最后对候选节点进行筛选（距离过近的删除？）（需要进一步考虑如何筛选）</p>
+<p>或者在前期嵌入阶段采取一些办法避免出现影响力重叠</p>
+<h4 id="2-关于图中节点的属性补全？"><a href="#2-关于图中节点的属性补全？" class="headerlink" title="2. 关于图中节点的属性补全？"></a>2. 关于图中节点的属性补全？</h4><p>本文中讨论的图均不考虑节点属性，然而现在越来越多的数据集中节点带有属性。</p>
+<p>是否可以对不同的数据集做不同的处理：</p>
+<p>对不带属性的图，先进行属性补全（使用其他方法获取嵌入作为特征或者使用一些中心性指标作为初始特征）</p>
+<p>然后对于带属性的图，通过GNN聚合特征，判断影响力大小</p>
+<h4 id="3-对嵌入方法（生成特征）进行改进"><a href="#3-对嵌入方法（生成特征）进行改进" class="headerlink" title="3. 对嵌入方法（生成特征）进行改进?"></a>3. 对嵌入方法（生成特征）进行改进?</h4><p>本文使用struc2vec获取嵌入向量。可以考虑使用其他更有效的嵌入方法</p>
+<p>比如：</p>
+<p><del>CARE : community-aware random walk for network embedding</del></p>
+<p><del>这种方法的优点（为什么选择它）：</del></p>
+<p><del>降低花费的计算时间</del></p>
+<p><del>邻域不仅包含一阶邻居的信息，而且可以包含不直接相连的节点（具有一阶和二阶邻域不包含的同质性）</del></p>
+<p>对于影响力传播，一阶和二阶邻居应该是是比较重要的。</p>
+<p>考虑LINE和SDNE（一阶和二阶方法）</p>
+<p>或者调整struc2vec的层数</p>
+<h4 id="4-该方法是否能扩展到异质图上-（暂时不考虑）"><a href="#4-该方法是否能扩展到异质图上-（暂时不考虑）" class="headerlink" title="4. 该方法是否能扩展到异质图上?（暂时不考虑）"></a>4. <del>该方法是否能扩展到异质图上?</del>（暂时不考虑）</h4><p><strong>问题一</strong> : 生成特征可以用哪些方法? </p>
+<p>metapath2vec等异质图嵌入方法</p>
+<p><strong>问题二</strong> : 处理特征时需要有哪些改变?</p>
+<p>由于本文的GNN只涉及消息传递与聚合, 不需要过多改变就可以使用在异质图上.</p>
+<p>但是,也可以对GNN进行一些完善, 比如加上 激活函数等</p>
+<p><strong>问题三</strong> : 本文最后得到的模型是一个泛化的通用模型, 在异质图上可以得到吗?</p>
+<p>本文中使用了很多基于BA模型生成的数据集进行训练和测试, 最后通过比较选择了最好的参数. 然后用于其他数据集.</p>
+<p>对于异质图, 对于不同节点类型数目的网络, 模型可能泛化性很差. </p>
+<p>但是可以考虑如下情况, 在同一类异质图上(比如, 学术网络), 通过不同规模的学术网络数据集进行训练, 选择参数, 最后在其他同类数据集上直接使用.</p>
+<p><strong>问题四</strong> : 异质图上边的类型不同, 信息传播模型是否需要改变?</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/12/SGNN/" data-id="clnn4xje00005w0u2evq2h3mj" data-title="" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/10/12/SUGRL/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/10/12/PathNet/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/10/12/SUGRL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/SGNN/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/PathNet/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/GraphSAGE%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Wan Li<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

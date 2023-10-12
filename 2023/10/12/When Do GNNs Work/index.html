@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>WanLi6</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="When Do GNNs Work摘要 现存的多种GNN模型中，包含的一个关键的部分是邻居聚合，其中每个节点的嵌入向量是通过参考它的邻居节点更新的。 本文旨在通过以下问题为这种机制提供一种更好的理解 邻居聚合是否总是必要和有用的？答案是否定的，在以下两个情况中，邻居聚合是无益的 当一个节点的邻居节点高度不相似 当一个节点的嵌入已经和它的邻居节点相似时     本文提出了一种新的度量方式，定量的衡量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WanLi6">
+<meta property="og:url" content="http://example.com/2023/10/12/When%20Do%20GNNs%20Work/index.html">
+<meta property="og:site_name" content="WanLi6">
+<meta property="og:description" content="When Do GNNs Work摘要 现存的多种GNN模型中，包含的一个关键的部分是邻居聚合，其中每个节点的嵌入向量是通过参考它的邻居节点更新的。 本文旨在通过以下问题为这种机制提供一种更好的理解 邻居聚合是否总是必要和有用的？答案是否定的，在以下两个情况中，邻居聚合是无益的 当一个节点的邻居节点高度不相似 当一个节点的嵌入已经和它的邻居节点相似时     本文提出了一种新的度量方式，定量的衡量">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/a9471d2d33a840d1ba0df15dc2393536.png">
+<meta property="article:published_time" content="2023-10-12T12:06:58.516Z">
+<meta property="article:modified_time" content="2023-09-28T07:55:24.813Z">
+<meta property="article:author" content="Wan Li">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/a9471d2d33a840d1ba0df15dc2393536.png">
+  
+    <link rel="alternate" href="/atom.xml" title="WanLi6" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">WanLi6</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">���˲���</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-When Do GNNs Work" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/12/When%20Do%20GNNs%20Work/" class="article-date">
+  <time class="dt-published" datetime="2023-10-12T12:06:58.516Z" itemprop="datePublished">2023-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="When-Do-GNNs-Work"><a href="#When-Do-GNNs-Work" class="headerlink" title="When Do GNNs Work"></a>When Do GNNs Work</h1><h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><ul>
+<li>现存的多种GNN模型中，包含的一个关键的部分是<strong>邻居聚合</strong>，其中每个节点的嵌入向量是通过参考它的邻居节点更新的。</li>
+<li>本文旨在通过以下问题为这种机制提供一种更好的理解<ul>
+<li>邻居聚合是否总是必要和有用的？答案是否定的，在以下两个情况中，邻居聚合是无益的<ol>
+<li>当一个节点的邻居节点<strong>高度不相似</strong></li>
+<li>当一个节点的嵌入<strong>已经</strong>和它的邻居节点相似时</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>本文提出了一种新的<strong>度量方式</strong>，定量的衡量这两种情况并将他们融合进一个自适应层。</li>
+</ul>
+<h2 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h2><ul>
+<li><p>已经有研究证明，过高的聚合程度将来自不同集群的节点混合在一起，并将这种现象称为<strong>“over-smoothing”</strong></p>
+</li>
+<li><p>但是，他们没有都没有从局部考虑不同的聚集度。事实上，如果我们允许聚合度在节点之间变化，GNN的性能可以显著提高。</p>
+</li>
+<li><p>那么，现在的问题是，<strong>如何控制单个节点的聚合程度？</strong></p>
+</li>
+<li><p>为了解决以上问题，本文分析出两种聚合无用的情况</p>
+<ol>
+<li>如果中心节点的邻居的学习到的特征&#x2F;标签<strong>不一致</strong>（<strong>高熵</strong>），则进一步聚合可能会损害性能;</li>
+<li>当中心节点的学习到的特征&#x2F;标签<strong>与其邻居几乎相同时</strong>，不需要进一步聚合。</li>
+</ol>
+</li>
+<li><p>本文设计了一个<strong>Adaptive-layer</strong>，在训练过程中，检查每个节点的邻居节点的学习到的标签，并通过作者设计的metric，衡量聚合该邻居是否有用，并只允许有益的节点进行聚合。</p>
+</li>
+</ul>
+<h2 id="贡献"><a href="#贡献" class="headerlink" title="贡献"></a>贡献</h2><ol>
+<li>从局部的视角分析了邻域聚合的作用</li>
+<li>提出了两个直观且有规则的度量方法定量的描述了邻域聚合没有帮助的两种情况</li>
+<li>将度量标准融合进一种新的<strong>自适应层</strong>的设计中</li>
+</ol>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>GNN更新函数一般包含以下操作：非线性，线性映射，邻域聚合</p>
+<p>过多的聚合会导致过平滑的现象。避免性能恶化的关键在于防止社团间（具有不同类别标签的节点）之间的混合。由此提出了本文的第一种度量：<strong>neighborhood entropy</strong></p>
+<p>此外，不同的节点最佳的<strong>聚合度</strong>是不一样的，因此本文提出第二种度量：<strong>center-neighbor similarity</strong></p>
+<h3 id="Neighborhood-Entropy"><a href="#Neighborhood-Entropy" class="headerlink" title="Neighborhood Entropy"></a>Neighborhood Entropy</h3><p>邻域聚合利用了网络中的同质性效应，即连接的节点应该是相似的。</p>
+<p>进一步，节点的邻居们应该彼此相似。当邻居不同意时，我们将此视为假设可能不成立并且聚合信息可能是噪声的警告。</p>
+<p>为了衡量一个特定节点的邻域的差异，计算邻域熵如下：</p>
+<p>$$Score_{etp}(u)&#x3D;-\int_{\mathbb{X}}f^{\mathcal{N}(u)}(x)\cdot\log(f^{\mathcal{N}(u)}{(x)})dx, \quad(5)$$</p>
+<ul>
+<li>$\mathbb{X}$ 代表特征空间</li>
+<li>$f^{\mathcal{N}(u)}$ 为节点 $u$ 的邻居的特征的 <strong>概率密度函数</strong>（Probability Density Function）(PDF)</li>
+</ul>
+<p>然而，由于PDF是每个邻居节点的<strong>狄拉克函数</strong>在高维空间的和，因此计算该微分熵是不可行的，并且不是非常有用的。</p>
+<p>我们使用预测的标签来计算节点 $u$ 的邻居的标签分布并计算其离散熵：</p>
+<p>$$\begin{aligned}<br>Score_{etp}(u)&amp; &#x3D;-\sum_{c\in C}P_{c}(u)\log(P_{c}(u)),  \<br>&amp;&amp;\text{(6)} \<br>P_{c}(u)&amp; &#x3D;\frac{|{v\in\mathcal{N}(u)|y_v&#x3D;c}|}{|\mathcal{N}(u)|},<br>\end{aligned}$$</p>
+<ul>
+<li>$C$ 是所有标签的类别集合</li>
+<li>$Score_{etp}(u)$ 更大的话，节点 $u$ 的邻居节点的区别就更大</li>
+</ul>
+<h3 id="Center-Neighbor-Similarity"><a href="#Center-Neighbor-Similarity" class="headerlink" title="Center-Neighbor Similarity"></a>Center-Neighbor Similarity</h3><p>当节点的特征与邻居节点的特征已经足够相似时，邻域聚合操作可能是多余的。</p>
+<p>本文使用 <strong>pointwise mutual information(PMI)</strong> 描述中心节点和他的邻居们的相似性。</p>
+<p>$$PMI(u;\mathcal{N}(u))&#x3D;\frac{P(\mathcal{N}(u)|u)}{P(\mathcal{N}(u))}$$</p>
+<p>由于我们没有邻居特征的概率分布的先验知识，我们假设它遵循均匀分布，这使得${P(\mathcal{N}(u))}$是常数。然后，相似性定义如下：</p>
+<p>$$Score_{sim}(u)&#x3D;P(\mathcal{N}(u)|u)&#x3D;\frac{1}{|\mathcal{N}(u)|}\sum_{v\in\mathcal{N}(u)}\frac{f_u^Tf_v}{\sum_{k\in V}f_u^Tf_k},\quad(7)$$</p>
+<ul>
+<li>$u$ 为中心节点</li>
+<li>$\mathcal{N}(u)$ 是节点 $u$ 的邻居集。</li>
+<li>$f(u)$ 是节点 $u$ 的特征，可能是输入特征，学习到的特征，或者是节点预测的标签。</li>
+</ul>
+<p>相似的，我们可以使用独热编码预测标签以计算该指标</p>
+<p>$$Score_{sim}(u)&#x3D;\frac{|{v\in\mathcal{N}(u)|y_{v}&#x3D;y_{u}}|}{|\mathcal{N}(u)|\cdot|{v\in V|y_{v}&#x3D;y_{u}}|}.\quad(8)$$</p>
+<ul>
+<li>$Score_{sim}(u)$ 越大，节点$u$与他的邻居越相似</li>
+</ul>
+<p>在这种情况下，我们可以比较邻域聚合之前和之后的性能，并表明预测结果几乎相同，如以下定理1中正式推导的。</p>
+<h3 id="Theorem-1"><a href="#Theorem-1" class="headerlink" title="Theorem 1"></a>Theorem 1</h3><p>假设我们使用每个标签的预测概率分布 $h_u$ 来计算$Score_{sim}$。</p>
+<p>如果对所有的 $u \in V$ , 有 $Score_{sim}(u)\geq\epsilon $ 。则邻域聚合前后的 2-norm 损失之差 $\Delta\mathcal{L}\leq\sqrt{2(1-\frac{\epsilon|V|}{|C|})}$</p>
+<p><strong>证明：</strong></p>
+<ul>
+<li>$f_u$ 为节点 $u$ 的初始特征</li>
+<li>$l_u$ 是节点 $u$ 的真是独热标签向量</li>
+<li>$h_u$ 是节点 $u$ 初始的预测标签分布</li>
+</ul>
+<p>聚合后的预测标签分布为：$\hat{h_{u}}&#x3D;\frac{1}{|\mathcal{N}(u)+1|}\sum_{v\in\mathcal{N}(u)\bigcup{u}}h_{v}$</p>
+<p>$$\because\langle h_{u},\hat{h}<em>{u}\rangle\geq\langle h</em>{u},\frac{\sum_{v\in\mathcal{N}(u)}h_{v}}{|\mathcal{N}(u)|}\rangle\geq\epsilon\sum_{u\in V}\langle h_{u},h_{v}\rangle,\forall u\in V$$</p>
+<blockquote>
+<p>因为 $\hat{h}_{u}$ 包含了节点 $u$ 本身的信息, 因此$h_u$与$\hat{h}_u$的内积要比后边的大</p>
+</blockquote>
+<blockquote>
+<p>由于 $\epsilon \leq \frac{1}{|\mathcal{N}_{u}|}$ , 后半个不等式成立</p>
+</blockquote>
+<p>$$\therefore\sum_{u\in V}\langle h_{u},\hat{h_{u}}\rangle\geq\epsilon\langle\sum_{u\in V}h_{u},\sum_{u\in V}h_{u}\rangle\geq\epsilon\frac{|V|^{2}}{|C|}$$</p>
+<blockquote>
+<p>$\langle\sum_{u\in V}h_{u},\sum_{u\in V}h_{u}\rangle \geq |V|^2\langle{h_{avg}},{h_{avg}}\rangle \geq \frac{|V|^2}{|C|}$</p>
+</blockquote>
+<p>$$\begin{aligned}<br>&amp;\Delta\mathcal{L}&#x3D;\frac{1}{|V|}\sum_{u\in V}(||h_{u}-l_{u}||-||\hat{h_{u}}-l_{u}||) \<br>&amp;\leq\frac{1}{|V|}\sum_{u\in V}||h_u-\hat{h_u}||\leq\frac{\sqrt{|V|}}{|V|}\sqrt{\sum_{u\in V}||h_u-\hat{h_u}||^2} \<br>&amp;&#x3D;\frac{\sqrt{|V|}}{|V|}\sqrt{\sum_{u\in V}||h_u||^2+\sum_{u\in V}||\hat{h_u}||^2-2\sum_{u\in V}\langle h_u,\hat{h_u}\rangle} \<br>&amp;\leq\frac{\sqrt{|V|}}{|V|}\sqrt{2|V|-2\frac{\epsilon|V|^2}{|C|}}&#x3D;\sqrt{2(1-\frac{\epsilon|V|}{|C|})}.<br>\end{aligned}$$</p>
+<blockquote>
+<p>第一步推导根据范数的三角不等式</p>
+<p>$\begin{align}&amp;\frac{1}{|V|}\sum_{u\in V}(||h_{u}-l_{u}||-||\hat{h_{u}}-l_{u}||)\ &amp;\leq \frac{1}{|V|}\sum_{u\in V}(||h_u|| + ||l_u|| - ||\hat{h}<em>u|| - ||l_u||) \quad (两边之和大于第三边) \ &amp;&#x3D;\frac{1}{|V|}\sum</em>{u\in V}(||h_u|| - ||\hat{h}<em>u||)\ &amp;\leq \frac{1}{|V|}\sum</em>{u\in V}(||h_u - \hat{h}_u||) \quad(两边之差小于第三边) \end{align}$</p>
+</blockquote>
+<blockquote>
+<p>$\begin{align} &amp;||h_u - \hat{h}_u||^2 \&amp;&#x3D; ||h_u - \hat{h}_u|| \cdot ||h_u - \hat{h}<em>u|| \&amp; &#x3D; ||h_u||^2 + ||\hat{h}<em>u||^2 - 2 \langle h</em>{u},\hat{h}</em>{u}\rangle \end{align}$ </p>
+</blockquote>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>经过上述分析,本文提出了一个 <strong>自适应层</strong>, 允许节点在每一轮邻域聚合的时候做出独立的决定。最终，每个节点可能会经历不同的 <strong>聚合度</strong>。</p>
+<p>具体来说，在每一层中应用门控函数，控制邻域信息的影响。它的值由$Score_{sim}$ 和 $Score_{etp}$ 决定。</p>
+<p>与SGC的精神相似，本文去除了所有的非线性层。</p>
+<p>模型结构如下：</p>
+<p>$$\begin{aligned}<br>h_{u}^{l+1}&amp; &#x3D;h_{u}^{l}+z_{l,u}Agg({h_{v}^{l}|v\in\mathcal{N}(u)}),\quad(1&lt;l&lt;L)  \<br>h_{u}^{1}&amp; &#x3D;W_{h}Agg({x_{v}|v\in\mathcal{N}(u)}),  \<br>y_{u}&amp; &#x3D;\mathrm{softmax}(W_{y}h_{u}^{L}),<br>\end{aligned} \quad(9)$$</p>
+<ul>
+<li>$z_{l,u}$ 是控制邻域聚合的随机变量</li>
+<li>更新函数类似于残差层，原因如下：<ol>
+<li>残差层可以让模型堆叠更多的层</li>
+<li>可以用同样的映射矩阵 $W_y$ 将隐藏状态 $h_u^l$ 映射到标签</li>
+</ol>
+</li>
+</ul>
+<p>使用以下公式计算门 $z_{l,u}$</p>
+<p>$$z_{l,u}&#x3D;\sigma(\tau_{1}-\mathrm{Norm}(Score_{sim}(l,u)))  \cdot\sigma(\tau_{2}-\mathrm{Norm}(Score_{etp}(l,u))).<br> \quad(10)$$</p>
+<ul>
+<li><p>激活函数 $\sigma$ 将 $z$ 值压缩到（0,1)</p>
+</li>
+<li><p>当$Score_{sim}$ 和 $Score_{etp}$ 都很大时，$z$ 会是一个接近0的数</p>
+</li>
+<li><p>$Norm$ 是批量归一化操作，用于重新缩放分数，以便它们在各层之间具有可比性。</p>
+</li>
+</ul>
+<p>为了简化，我们使用独热预测标签计算$Score_{sim}$ 和 $Score_{etp}$。 因为我们没有实际类大小的先验知识，我们假设所有的标签都具有相同的类大小。因此，标签类别大小项是常数，并且从计算中省略。</p>
+<p>为了与基于注意力的方法比较，我们可以拓展模型以处理邻居的注意力权重。</p>
+<p>$$\begin{aligned}<br>Score_{sim}^{att}(l,u)&amp; &#x3D;\sum_{v\in\mathcal{N}(u),y_{v}^{l}&#x3D;y_{u}^{l}}a_{u,v}^{l},  \<br>Score_{etp}^{att}(l,u)&amp; \begin{aligned}&#x3D;-\sum_{y\in Y},P_{y}^{att}(l,u)\log(P_{y}^{att}(l,u))\quad(11)\end{aligned}  \<br>P_{y}^{att}(l,u)&amp; &#x3D;\sum_{v\in\mathcal{N}(u),y_{v}^{l}&#x3D;y}a_{u,v}^{l},<br>\end{aligned}$$</p>
+<ul>
+<li>$a_{u,v}^{l}$ 是节点 $u$ 对节点 $v$ 在 $l$ 层的注意力系数</li>
+</ul>
+<p>我们还可以通过为每个注意力头部计算不同的 $z$ 来将我们的度量扩展到多头注意力，表示为$z^k_{l,u}$：</p>
+<p>$$\begin{aligned}<br>h_{u}^{l+1}&amp; &#x3D;\mathop|\limits^K_{k&#x3D;1}h_{u}^{l}+z_{l,u}^{k}Agg({h_{v}^{l}|v\in\mathcal{N}(u)})\quad(l&lt;L-1),  \<br>h_{u}^{L}&amp; &#x3D;\frac{1}{K}\sum_{k&#x3D;1}^{K}(h_{u}^{L-1}+z_{L-1,u}^{k}Agg({h_{v}^{L-1}|v\in\mathcal{N}(u)})).  \<br>&amp;&amp;\text{2)}<br>\end{aligned}$$</p>
+<p><strong>ALaGCN</strong> <strong>model</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/a9471d2d33a840d1ba0df15dc2393536.png" alt="在这里插入图片描述"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/12/When%20Do%20GNNs%20Work/" data-id="clnn4xje20007w0u22sxjeghu" data-title="" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/10/12/GAT%E5%AD%A6%E4%B9%A0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/10/12/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/10/12/SUGRL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/SGNN/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/PathNet/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/GraphSAGE%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Wan Li<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

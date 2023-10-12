@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>WanLi6</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Simple Unsupervised Graph Representation Learning(简单的无监督图表示学习)摘要 本文提出一种简单的无监督图表示学习方法以实现有效且高效的对比学习。  具体来说，本文提出的多重损失探索了结构信息和邻域信息之间的互补信息以增大类间差异，同时增加上限损失以实现正嵌入和锚嵌入之间的有限距离以减少类内差异。  此外，本文的方法从以前的图对比学习方法中删除了广">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WanLi6">
+<meta property="og:url" content="http://example.com/2023/10/12/SUGRL/index.html">
+<meta property="og:site_name" content="WanLi6">
+<meta property="og:description" content="Simple Unsupervised Graph Representation Learning(简单的无监督图表示学习)摘要 本文提出一种简单的无监督图表示学习方法以实现有效且高效的对比学习。  具体来说，本文提出的多重损失探索了结构信息和邻域信息之间的互补信息以增大类间差异，同时增加上限损失以实现正嵌入和锚嵌入之间的有限距离以减少类内差异。  此外，本文的方法从以前的图对比学习方法中删除了广">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/e229176647f8420fa5765d9d4ab430e3.png">
+<meta property="article:published_time" content="2023-10-12T12:06:58.555Z">
+<meta property="article:modified_time" content="2023-09-19T03:07:34.274Z">
+<meta property="article:author" content="Wan Li">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/e229176647f8420fa5765d9d4ab430e3.png">
+  
+    <link rel="alternate" href="/atom.xml" title="WanLi6" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">WanLi6</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">���˲���</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-SUGRL" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/12/SUGRL/" class="article-date">
+  <time class="dt-published" datetime="2023-10-12T12:06:58.555Z" itemprop="datePublished">2023-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Simple-Unsupervised-Graph-Representation-Learning-简单的无监督图表示学习"><a href="#Simple-Unsupervised-Graph-Representation-Learning-简单的无监督图表示学习" class="headerlink" title="Simple Unsupervised Graph Representation Learning(简单的无监督图表示学习)"></a>Simple Unsupervised Graph Representation Learning(简单的无监督图表示学习)</h1><h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><ul>
+<li><p>本文提出一种简单的<strong>无监督图表示学习</strong>方法以实现有效且高效的对比学习。</p>
+</li>
+<li><p>具体来说，本文提出的<strong>多重损失</strong>探索了<strong>结构信息</strong>和<strong>邻域信息</strong>之间的互补信息以<strong>增大类间差异</strong>，同时增加<strong>上限损失</strong>以实现正嵌入和锚嵌入之间的有限距离以<strong>减少类内差异</strong>。</p>
+</li>
+<li><p>此外，本文的方法从以前的图对比学习方法中删除了广泛使用的数据增强和鉴别器，同时可以输出低维嵌入，产生一个有效的模型。</p>
+</li>
+</ul>
+<h2 id="贡献"><a href="#贡献" class="headerlink" title="贡献"></a>贡献</h2><ol>
+<li>首先，为了保证算法的有效性，提出了联合考虑结构信息和邻域信息来挖掘它们的互补信息，目的是扩大类间变异，以及设计一个上限损失来实现小的类内变异</li>
+<li>其次，为了提高效率，我们将数据增强和鉴别器从对比学习中删除。这使得本文的方法很容易在大规模数据集上实现可扩展性。</li>
+<li>最后，通过对8个公共基准数据集的综合实证研究，与11种比较方法进行了比较，验证了本文方法在节点分类方面的有效性和效率</li>
+</ol>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p><img src="https://img-blog.csdnimg.cn/e229176647f8420fa5765d9d4ab430e3.png" alt="The flowchart"></p>
+<p>SUGRL侧重于MI最大化。在文献中，考虑到MI最大化的计算成本，SUGRL中的MI最大化被转移到对比学习，其中涉及锚嵌入，正嵌入和负嵌入，以及对比损失的定义。</p>
+<h3 id="Anchor-and-Negative-Embedding-Generation"><a href="#Anchor-and-Negative-Embedding-Generation" class="headerlink" title="Anchor and Negative Embedding Generation"></a>Anchor and Negative Embedding Generation</h3><p>现有的工作通常将节点表示或图形摘要视为锚点。</p>
+<p>本文对于输入特征 $X$ 使用一个<strong>MLP</strong>以生成带有语义信息的 <strong>anchor embedding</strong></p>
+<p>$$\mathbf{X}^{(l+1)}&#x3D;Dropout\left(\sigma\left(\mathbf{X}^{(l)}\mathbf{W}^{(l)}\right)\right)$$</p>
+<p>$$\mathbf{H}&#x3D;\mathbf{X}^{(l+1)}\mathbf{W}^{(l+1)}$$</p>
+<ul>
+<li>$X^{(0)} &#x3D; X$</li>
+<li>$\sigma$ 是激活函数</li>
+<li>$\mathbf{W}^{(l)}$ 是第 $l$ 层的权重</li>
+</ul>
+<p>对于负嵌入的生成，流行的方法（例如，DGI、GIC和MVGRL）是从原始图中获得损坏的图，然后用GCN对其进行处理。相比之下，本文直接对锚嵌入进行<strong>行混洗</strong>得到负嵌入，进一步减少了训练时间。</p>
+<p>$$\mathbf{H}^-&#x3D;\textit{Shuffle }([\mathbf{h}_1,\mathbf{h}_2,\ldots,\mathbf{h}_N])$$</p>
+<p>总之，本文提出的方法通过去除GCN，减少了计算成本的同时保持了有效性。</p>
+<h3 id="Positive-Embedding-Generation"><a href="#Positive-Embedding-Generation" class="headerlink" title="Positive Embedding Generation"></a>Positive Embedding Generation</h3><p>现存的工作大多将结构信息视作正嵌入。此外，以往的工作通常采用数据增强来获得不同的信息，以进行有效的对比学习，</p>
+<p>相比之下，在本文中我们提出通过生成两种正嵌入来获得不同的信息，即，<strong>结构嵌入和邻域嵌入</strong>。具体来说，我们采用<strong>GCN</strong>和<strong>邻居采样</strong>方法来生成它们。</p>
+<h4 id="Structural-information"><a href="#Structural-information" class="headerlink" title="Structural information"></a>Structural information</h4><p>为了得到图的结构信息，我们使用广泛使用的GCN作为基本编码器。</p>
+<p>$$\mathbf{H}^{+^{(l+1)}}&#x3D;\sigma\left(\widehat{\mathbf{A}}\mathbf{H}^{+^{(l)}}\mathbf{W}^{(l)}\right)$$</p>
+<ul>
+<li>$\mathbf{H}^{+(0)}&#x3D;\mathbf{X}$ 且 $\mathbf{H}^{+(l)}$意味着第l层的特征</li>
+<li>$\widehat{\mathbf{A}}&#x3D;\hat{\mathbf{D}}^{-1&#x2F;2}\tilde{\mathbf{A}}\hat{\mathbf{D}}^{-1&#x2F;2}\in\mathbb{R}^{N\times N}$ 是对称规范化邻接矩阵</li>
+<li>$\hat{\mathbf{D}}\in\mathbb{R}^{N\times N}$ 是 $\tilde{\mathbf{A}}&#x3D;{\mathbf{A}}+{\mathbf{I}}_N$ 的度矩阵。${\mathbf{I}}_N$ 是单位矩阵</li>
+</ul>
+<p>值得注意的是，本文的方法直接共享了MLP和GCN编码器的权重（例如 $\mathbf{W}^{(l)}$），以进一步减少时间消耗。</p>
+<h4 id="Neighbor-information"><a href="#Neighbor-information" class="headerlink" title="Neighbor information"></a>Neighbor information</h4><p>为了获得带有邻域信息的正嵌入，本文首先存储所有节点的邻居嵌入索引，然后进行采样，接着计算样本的平均值。这样可以高效的获取节点的邻域信息。</p>
+<p>$$\widetilde{\mathbf{h}}<em>i^+&#x3D;\frac1m\sum</em>{j&#x3D;1}^m\left{\mathbf{h}_j\mid v_j\in\mathcal{N}_i\right}$$</p>
+<p>总之，结构嵌入和邻居嵌入分别关注所有邻居和部分邻居。也就是说，结构嵌入代表一般表示，而邻居嵌入是特定表示。因此，他们从不同的角度解释样本，将它们一起考虑，以尽可能获得它们的互补信息。</p>
+<h3 id="Multiplet-Loss"><a href="#Multiplet-Loss" class="headerlink" title="Multiplet Loss"></a>Multiplet Loss</h3><p>给定锚嵌入、正嵌入和负嵌入，对比学习旨在进行正对（即，锚和正嵌入）接近，同时保持负对（即，锚和负嵌入）相距很远。许多对比学习方法（例如，DGI、GMI、MVGRL和GIC）设计鉴别器（例如，双线性层）来区分正对和负对，但是鉴别器是耗时的。此外，减少泛化误差对于UGRL也很重要，因为训练过程中的小泛化误差可能会提高对比学习的泛化能力。此外，无论是减小类内变异还是扩大类间变异，都已被证明是减小泛化误差的有效方法</p>
+<p>在SUGRL中，我们考虑的三重损失为基础，并设计一个上限损失，以从本文的方法中移除鉴别器（为了提高效率），并减少类内的差异，以及扩大类间的差异（为了提高有效性）。具体地，相对于每个采样的三重态损失可以公式化为：</p>
+<p>$$\alpha+d\left(\mathbf{h},\mathbf{h}^+\right)&lt;d\left(\mathbf{h},\mathbf{h}^-\right)$$</p>
+<ul>
+<li>$d(\cdot)$ 是一个相似度度量（例如：$\ell_2$范数距离）</li>
+<li>$\alpha$ 是一个非负值，以确保正嵌入和负嵌入之间的“安全”距离。</li>
+</ul>
+<p>通过对所有负嵌入的损失求和，上式可以扩展到</p>
+<p>$$\mathcal{L}<em>{triplet}&#x3D;\frac1k\sum</em>{i&#x3D;1}^k\left{d(\mathbf{h},\mathbf{h}^+\right)^2-d\left(\mathbf{h},\mathbf{h}<em>i^-\right)^2+\alpha}</em>+$$</p>
+<ul>
+<li>$${\cdot}_{+}&#x3D;\max{\cdot,0}$$</li>
+<li>$k$ 是负样本的个数</li>
+</ul>
+<p>为了增加类间的变异，我们应该把负对推得远离正对。为了实现这一点，我们采用了在上一节中定义的两种正嵌入上的三重损失，以得到：</p>
+<p>$$\mathcal{L}<em>S&#x3D;\frac1k\sum</em>{i&#x3D;1}^k\left{d\left(\mathbf{h},\mathbf{h}^+\right)^2-d\left(\mathbf{h},\mathbf{h}<em>i^-\right)^2+\alpha\right}</em>+$$</p>
+<p>$$\mathcal{L}<em>N&#x3D;\frac{1}{k}\sum</em>{j&#x3D;1}^k\left{d\left(\mathbf{h},\widetilde{\mathbf{h}}^+\right)^2-d\left(\mathbf{h},\mathbf{h}<em>j^-\right)^2+\alpha\right}</em>+$$</p>
+<p>根据上一节的内容，结构嵌入（$\mathrm{h^{+}}$）与邻域嵌入不同（$\mathrm{\tilde{h}^{+}}$）。</p>
+<p>根据两种类型的正嵌入与锚嵌入的距离不同，可以分为两种情况</p>
+<p>Case 1: $$d\left(\mathbf{h},\mathbf{h}^{+}\right)^{2}\geq d(\mathbf{h},\widetilde{\mathbf{h}}^{+})^{2}$$</p>
+<p>Case 2: $$d\left(\mathbf{h},\mathbf{h}^{+}\right)^{2}&lt;d(\mathbf{h},\widetilde{\mathbf{h}}^{+})^{2}$$</p>
+<p>如果是Case 1，在$\mathcal{L}_S$是0的情况是，$\mathcal{L}_N$一定是非0的。在这种情况下$\mathcal{L}_N$仍然是有效的，而$\mathcal{L}_S$是无效的。结果，负嵌入将继续远离锚嵌入，类间差异被放大。与Case 1类似，Case 2也可以扩大类间差异。</p>
+<p>基于上述分析，Case 1或Case 2都可以扩大类间差异。特别是，如果其中一个是无效的，另一个仍然有效，以进一步扩大类间差异。因此，$\mathcal{L}_S$ 和 $\mathcal{L}_N$ 可以从结构嵌入和相邻嵌入中获得互补信息，从而能够放大类间的变异。</p>
+<p>$\mathcal{L}_{triplet}$要求 $d\left(\mathbf{h},\mathbf{h}^{+}\right)^{2}$ 和 $d\left(\mathbf{h},\mathbf{h}<em>i^-\right)^2$ 之间的距离应该大于$\alpha$，但它忽略了锚嵌入和正嵌入之间的距离。如果锚嵌入和正嵌入之间的距离大，则$\mathcal{L}</em>{triplet}$中的{·}+项也可以是非零的。然而，在这种情况下，类内变化可能很大，不利于减少泛化误差。</p>
+<p>为了解决这个问题，本文通过以下目标函数对于负对和正对研究了一个上限（$\alpha + \beta$）：</p>
+<p>$$\alpha+d\left(\mathbf{h},\mathbf{h}^+\right)&lt;d\left(\mathbf{h},\mathbf{h}^-\right)&lt;d\left(\mathbf{h},\mathbf{h}^+\right)+\alpha+\beta $$</p>
+<ul>
+<li>$\beta$是一个非负微调参数</li>
+<li>上界 $\alpha + \beta$ 保证了负嵌入和锚嵌入之间的距离是有限的，所以正嵌入和锚嵌入之间的距离也是有限的（$$\alpha+d\left(\mathbf{h},\mathbf{h}^+\right)&lt;d\left(\mathbf{h},\mathbf{h}^-\right)$$）</li>
+</ul>
+<p>最终减少了类内差异。在对所有负嵌入的损失求和之后，所提出的减小类内变化的上限损失定义如下：</p>
+<p>$$\mathcal{L}<em>U&#x3D;-\frac{1}{k}\sum</em>{i&#x3D;1}^k\left{d\left(\mathbf{h},\mathbf{h}^+\right)^2-d\left(\mathbf{h},\mathbf{h}<em>i^-\right)^2+\alpha+\beta\right}</em>-$$</p>
+<ul>
+<li>$${\cdot}_{-}&#x3D;\min{\cdot,0}$$</li>
+</ul>
+<p>值得注意的是，上界没有被应用于neighbor information。这是由于</p>
+<ol>
+<li>每种信息都能达到相似的结果</li>
+<li>在实验中同时使用它们并不能显着提高模型性能</li>
+</ol>
+<p>最终，融合三重损失以及上界损失，本文提出的多重损失函数如下：</p>
+<p>$$\mathcal{L}&#x3D;\omega_1\mathcal{L}_S+\omega_2\mathcal{L}_N+\mathcal{L}_U$$</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/12/SUGRL/" data-id="clnn4xje10006w0u25e1xapc9" data-title="" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/10/12/SGNN/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/10/12/SUGRL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/SGNN/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/PathNet/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/GraphSAGE%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Wan Li<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

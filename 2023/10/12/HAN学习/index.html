@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>WanLi6</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="HAN学习[TOC] 论文思路摘要本文首先提出了一种新的基于分层注意力的异构图神经网络，包括节点级和语义级的注意力。具体来说，节点级注意力旨在学习节点与其基于元路径的邻居之间的重要性，而语义级注意力能够学习不同元路径的重要性。通过学习节点级和语义级注意力的重要性，可以充分考虑节点和元路径的重要性。然后，所提出的模型可以以分层的方式通过基于源路径的邻居节点聚合特征来生成节点嵌入。 HAN模型HAN模">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WanLi6">
+<meta property="og:url" content="http://example.com/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="WanLi6">
+<meta property="og:description" content="HAN学习[TOC] 论文思路摘要本文首先提出了一种新的基于分层注意力的异构图神经网络，包括节点级和语义级的注意力。具体来说，节点级注意力旨在学习节点与其基于元路径的邻居之间的重要性，而语义级注意力能够学习不同元路径的重要性。通过学习节点级和语义级注意力的重要性，可以充分考虑节点和元路径的重要性。然后，所提出的模型可以以分层的方式通过基于源路径的邻居节点聚合特征来生成节点嵌入。 HAN模型HAN模">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/c249353816544eb3855aeae4543d2e30.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/ca4cf7ec7a9841038f29c6dabff757cb.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/fd6cbc78ace044beab719a3ac9545a6e.png">
+<meta property="article:published_time" content="2023-10-12T12:06:58.523Z">
+<meta property="article:modified_time" content="2023-08-10T14:48:05.958Z">
+<meta property="article:author" content="Wan Li">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/c249353816544eb3855aeae4543d2e30.png">
+  
+    <link rel="alternate" href="/atom.xml" title="WanLi6" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">WanLi6</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">���˲���</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-HAN学习" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/" class="article-date">
+  <time class="dt-published" datetime="2023-10-12T12:06:58.523Z" itemprop="datePublished">2023-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="HAN学习"><a href="#HAN学习" class="headerlink" title="HAN学习"></a>HAN学习</h1><p>[TOC]</p>
+<h2 id="论文思路"><a href="#论文思路" class="headerlink" title="论文思路"></a>论文思路</h2><h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p>本文首先提出了一种新的基于分层注意力的异构图神经网络，包括<strong>节点级</strong>和<strong>语义级</strong>的注意力。具体来说，节点级注意力旨在学习<strong>节点</strong>与其基于元路径的<strong>邻居</strong>之间的重要性，而语义级注意力能够学习<strong>不同元路径</strong>的重要性。通过学习节点级和语义级注意力的重要性，可以充分考虑节点和元路径的重要性。然后，所提出的模型可以以<strong>分层的方式</strong>通过基于<strong>源路径的邻居</strong>节点<strong>聚合特征</strong>来生成<strong>节点嵌入</strong>。</p>
+<h3 id="HAN模型"><a href="#HAN模型" class="headerlink" title="HAN模型"></a>HAN模型</h3><p>HAN模型使用分层的注意力结构：分为<strong>节点级别</strong>的注意力和<strong>语义级别</strong>的注意力。</p>
+<p>节点级别：学习基于元路径的邻居的<strong>权重</strong>并<strong>聚合</strong>它们得到<strong>语义特定的节点嵌入</strong>。</p>
+<p>语义级别：判断元路径的<strong>不同</strong>，并针对特定任务得到语义特定节点嵌入的<strong>最优加权组合</strong>。</p>
+<p>下图为HAN的整体结构图。</p>
+<p><img src="https://img-blog.csdnimg.cn/c249353816544eb3855aeae4543d2e30.png" alt="HAN结构"></p>
+<h4 id="节点级别的注意力"><a href="#节点级别的注意力" class="headerlink" title="节点级别的注意力"></a>节点级别的注意力</h4><p>由于每个类型的节点具有不同类型的特征，于是本文设计了类型特定的**转换矩阵$M_{\phi_{i}}$**将不同类型的节点特征映射到同一个特征空间中。映射过程如下公式1：</p>
+<p>$$\mathbf{h}<em>i^{\prime}&#x3D;\mathbf{M}</em>{\phi_i}\cdot\mathbf{h}_i $$</p>
+<ul>
+<li>$\mathbf{h}<em>i$ 和 $\mathbf{h}</em>{i}^{\prime}$ 分别为节点 $i$ 的原始特征和映射后的特征</li>
+<li>经过映射之后，节点级别的注意力机制可以处理任意类型的节点。</li>
+</ul>
+<p>接着，本文使用<strong>自我注意力</strong>学习各种类型节点的权重，给定一个节点对$(i,j)$ ，他们是通过元路径 $\Phi$，$e_{ij}^{\Phi}$代表节点$j$对节点$i$的重要性。如下公式2</p>
+<p>$$e_{ij}^{\Phi}&#x3D;att_{node}(\mathbf{h}_i^{\prime},\mathbf{h}_j^{\prime};\Phi)$$</p>
+<ul>
+<li>这里的$att_{node}$表示执行节点级注意力的深度神经网络</li>
+<li>对于指定的$\Phi$,  $att_{node}$是共享的</li>
+<li>$e_{ij}^{\Phi}$ 不是对称的</li>
+</ul>
+<p>然后，通过<strong>隐蔽注意力</strong>将结构信息注入模型（只需要对 $j\in\mathcal{N}<em>{i}^{\Phi}$ 计算 $e</em>{ij}^{\Phi}$）,$$\mathcal{N}_{i}^{\Phi}$$代表节点$i$基于元路径的邻居（包括自己），然后通过softmax函数进行**归一化得到重要性系数$\alpha_{ij}^{\Phi}$**。如下公式3</p>
+<p>$$\alpha_{ij}^{\Phi}&#x3D;softmax_{j}(e_{ij}^{\Phi})&#x3D;\frac{\exp(\sigma(\mathbf{a}<em>{\Phi}^{\mathrm{T}}\cdot[\mathbf{h}</em>{i}^{\prime}|\mathbf{h}<em>{j}^{\prime}]))}{\sum</em>{k\in\mathcal{N}<em>{i}^{\Phi}}\exp(\sigma(\mathbf{a}</em>{\Phi}^{\mathrm{T}}\cdot[\mathbf{h}<em>{i}^{\prime}|\mathbf{h}</em>{k}^{\prime}]))}$$</p>
+<ul>
+<li>$\sigma $ 代表激活函数， $||$ 代表级联</li>
+<li>$\mathbf{a}_{\Phi}$ 是元路径$\Phi$对应的节点级别注意力向量</li>
+</ul>
+<p>然后，节点$i$的<strong>基于元路径的嵌入</strong>可以通过邻居的映射后的特征根据重要性系数进行聚合决定。如下公式4</p>
+<p>$$\mathbf{z}<em>i^\Phi&#x3D;\sigma\bigg(\sum</em>{j\in\mathcal{N}<em>i^\Phi}\alpha</em>{ij}^\Phi\cdot\mathbf{h}_j’\bigg)$$</p>
+<ul>
+<li>$\mathbf{z}_i^\Phi$ 就是学习到的嵌入向量</li>
+</ul>
+<p>由于异构图具有无标度特性，因此图数据的方差很大。为了解决上述挑战，我们将节点级注意力扩展到多头注意力，使训练过程更加稳定。如下公式5</p>
+<p>$$\mathbf{z}<em>{i}^{\Phi}&#x3D;\prod\limits</em>{k&#x3D;1}^{K}\sigma\bigg(\sum\limits_{j\in\mathcal{N}<em>{i}^{\Phi}}\alpha</em>{ij}^{\Phi}\cdot\mathbf{h}_{j}’\bigg)$$</p>
+<p>对于元路径集${\Phi_{1},\ldots,\Phi_{P}}$， 在节点的特征经过节点级别注意力之后，我们可以得到$P$组语义特定的节点特征，为$$\left{\mathbf{Z}<em>{\Phi</em>{1}},\ldots,\mathbf{Z}<em>{\Phi</em>{P}}\right}$$</p>
+<h4 id="语义级别的注意力"><a href="#语义级别的注意力" class="headerlink" title="语义级别的注意力"></a>语义级别的注意力</h4><p>异构图中的每个节点通常包含<strong>多种类型的语义信息</strong>，语义特定的节点嵌入只能从一个方面反映节点。为了学习一个更全面的节点嵌入，我们需要<strong>融合多种语义</strong>，这些语义可以通过元路径来揭示。为了应对异构图中的元路径选择和语义融合挑战，作者提出了一种新颖的语义级注意力机制，用于自动学习不同元路径的重要性，并将它们融合到特定任务中。</p>
+<p>将节点级注意力得到的$P$组语义特定的节点嵌入作为输入，每个元路径的权重可以被描述如下公式6：</p>
+<p>$$(\beta_{\Phi_1},\ldots,\beta_{\Phi_P})&#x3D;att_{sem}(\mathrm{Z}<em>{\Phi_1},\ldots,\mathrm{Z}</em>{\Phi_P})$$</p>
+<p>为了学习每个元路径的重要性，首先通过非线性变换（例如，单层MLP）变换<strong>语义特定的嵌入向量</strong></p>
+<p>然后，我们通过变换嵌入与语义级注意向量$\mathbf q$的<strong>相似性</strong>度量语义特定嵌入的<strong>重要性</strong>。此外，对所有语义特定节点嵌入的重要性进行平均，这可以解释为每个元路径的重要性。如下公式7</p>
+<p>$$w_{\Phi_{p}}&#x3D;\frac{1}{|\mathcal{V}|}\sum_{i\in\mathcal{V}}\mathbf{q}^{\mathrm{T}}\cdot\tanh(\mathbf{W}\cdot\mathbf{z}<em>{i}^{\Phi</em>{p}}+\mathbf{b})$$</p>
+<ul>
+<li>$\mathbf W$是权重矩阵，$\mathbf b$是偏置向量，$\mathbf q$是语义级别的注意力向量</li>
+<li>上边的参数都是所有元路径共享的</li>
+</ul>
+<p>在得到每个元路径的重要性后，通过softmax函数对它们进行归一化。如下公式8</p>
+<p>$$\beta_{\Phi_p}&#x3D;\frac{\exp(w_{\Phi_p})}{\sum_{p&#x3D;1}^{P}\exp(w_{\Phi_p})}$$</p>
+<ul>
+<li>这可以解释为每个元路径在特定任务中的贡献</li>
+</ul>
+<p>使用学习的权重作为系数，我们可以融合这些语义特定的嵌入以获得最终的嵌入。如下公式9</p>
+<p>$$Z&#x3D;\sum_{p&#x3D;1}^{P}\beta_{\Phi_{p}}\cdot Z_{\Phi_{p}}$$</p>
+<p>然后，我们可以将最终的嵌入应用于特定的任务，并设计不同的损失函数。</p>
+<p>比如，对于半监督的节点分类任务，可以使用<strong>交叉熵损失函数</strong>。如下公式10</p>
+<p>$$L&#x3D;-\sum\limits_{l\in\mathcal{Y}_{L}}\mathrm{Y}^{l}\ln(\mathrm{C}\cdot\mathrm{Z}^{l})$$</p>
+<p>节点级别的注意力和语义级别的注意力聚合过程图示：</p>
+<p><img src="https://img-blog.csdnimg.cn/ca4cf7ec7a9841038f29c6dabff757cb.png" alt="节点级别的注意力和语义级别的注意力聚合过程图示"></p>
+<p>HAN的整个过程：</p>
+<p><img src="https://img-blog.csdnimg.cn/fd6cbc78ace044beab719a3ac9545a6e.png" alt="HAN算法整个过程"></p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>此模型具体的实现有两种方式：主要区别在于对数据集的处理以及基于元路径邻居的获取。</p>
+<ul>
+<li><p>直接读取作者处理过的数据集, 可以直接获取基于不同元路径的图</p>
+</li>
+<li><p>dgl可以通过metapath_reachable_graph方法从一个异质图以及给定的元路径获取源路径的可达图</p>
+</li>
+</ul>
+<p>实现的具体思路相同，下边以第二种方式为例，给出代码（注释中详细解释了实现的思路和过程）:</p>
+<blockquote>
+<p>下列代码中用到的其他工具类可以在Github仓库中找到</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> dgl</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> dgl.nn.pytorch <span class="keyword">import</span> GATConv</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">注释中的字母代表的含义：</span></span><br><span class="line"><span class="string">N : 节点数量</span></span><br><span class="line"><span class="string">M : 元路径数量</span></span><br><span class="line"><span class="string">D : 嵌入向量维度</span></span><br><span class="line"><span class="string">K : 多头注意力总数</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SemanticAttention</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_size, hidden_size=<span class="number">128</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(SemanticAttention, self).__init__()</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 语义层次的注意力</span></span><br><span class="line">        <span class="comment"># 对应论文公式（7），最终得到每条元路径的重要性权重</span></span><br><span class="line">        self.projection = nn.Sequential(</span><br><span class="line">            nn.Linear(in_size, hidden_size),</span><br><span class="line">            nn.Tanh(),</span><br><span class="line">            nn.Linear(hidden_size, <span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, z</span>):</span><br><span class="line">        <span class="comment"># 输入的z为(N, M, K*D)</span></span><br><span class="line">        <span class="comment"># 经过映射之后的w形状为 (M , 1)</span></span><br><span class="line">        w = self.projection(z).mean(<span class="number">0</span>)</span><br><span class="line">        <span class="comment"># beta (M ,1)</span></span><br><span class="line">        beta = torch.softmax(w, dim=<span class="number">0</span>)</span><br><span class="line">        <span class="comment"># beta (N, M, 1)</span></span><br><span class="line">        beta = beta.expand((z.shape[<span class="number">0</span>],) + beta.shape)</span><br><span class="line">        <span class="comment"># (N, D*K)</span></span><br><span class="line">        <span class="keyword">return</span> (beta * z).<span class="built_in">sum</span>(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HANLayer</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    meta_paths : list of metapaths, each as a list of edge types</span></span><br><span class="line"><span class="string">    in_size : input feature dimension</span></span><br><span class="line"><span class="string">    out_size : output feature dimension</span></span><br><span class="line"><span class="string">    layer_num_heads : number of attention heads</span></span><br><span class="line"><span class="string">    dropout : Dropout probability</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">                 meta_paths,</span></span><br><span class="line"><span class="params">                 in_size,</span></span><br><span class="line"><span class="params">                 out_size,</span></span><br><span class="line"><span class="params">                 layer_num_heads,</span></span><br><span class="line"><span class="params">                 drop_out</span>):</span><br><span class="line">        <span class="built_in">super</span>(HANLayer, self).__init__()</span><br><span class="line">        self.gat_layers = nn.ModuleList()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(meta_paths)):</span><br><span class="line">            <span class="comment"># 使用GAT对应的GATConv层，完成节点层面的注意力</span></span><br><span class="line">            <span class="comment"># 之所以能够之间使用GATConv,是因为在forward中生成了每个元路径对应的可达图</span></span><br><span class="line">            <span class="comment"># 那么在进行节点级注意力的时候，节点的所有邻居都是它基于元路径的邻居</span></span><br><span class="line">            <span class="comment"># 节点级注意力以及聚合的过程就等同于GATConv的过程</span></span><br><span class="line">            self.gat_layers.append(</span><br><span class="line">                GATConv(</span><br><span class="line">                    in_size,</span><br><span class="line">                    out_size,</span><br><span class="line">                    layer_num_heads,</span><br><span class="line">                    drop_out,</span><br><span class="line">                    drop_out,</span><br><span class="line">                    activation=F.elu,</span><br><span class="line">                    allow_zero_in_degree=<span class="literal">True</span></span><br><span class="line">                )</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 语义级注意力层</span></span><br><span class="line">            self.semantic_attention = SemanticAttention(</span><br><span class="line">                in_size=out_size * layer_num_heads</span><br><span class="line">            )</span><br><span class="line"></span><br><span class="line">            self.meta_paths = <span class="built_in">list</span>(<span class="built_in">tuple</span>(meta_path) <span class="keyword">for</span> meta_path <span class="keyword">in</span> meta_paths)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 缓存图</span></span><br><span class="line">            self._cached_graph = <span class="literal">None</span></span><br><span class="line">            <span class="comment"># 缓存每个元路径对应的可达图</span></span><br><span class="line">            self._cached_coalesced_graph = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, g, h</span>):</span><br><span class="line">        semantic_embeddings = []</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self._cached_graph <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">or</span> self._cached_graph <span class="keyword">is</span> <span class="keyword">not</span> g:</span><br><span class="line">            self._cached_graph = g</span><br><span class="line">            self._cached_coalesced_graph.clear()</span><br><span class="line">            <span class="comment"># 存储每个元路径对应的元路径可达图</span></span><br><span class="line">            <span class="keyword">for</span> meta_path <span class="keyword">in</span> self.meta_paths:</span><br><span class="line">                self._cached_coalesced_graph[</span><br><span class="line">                    meta_path</span><br><span class="line">                ] = dgl.metapath_reachable_graph(g, meta_path)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i, meta_path <span class="keyword">in</span> <span class="built_in">enumerate</span>(self.meta_paths):</span><br><span class="line">            new_g = self._cached_coalesced_graph[meta_path]</span><br><span class="line">            semantic_embeddings.append(self.gat_layers[i](new_g, h).flatten(<span class="number">1</span>))</span><br><span class="line">        <span class="comment"># 经过对每个元路径进行节点级聚合</span></span><br><span class="line">        <span class="comment"># semantic_embeddings 为一个长度为M的列表</span></span><br><span class="line">        <span class="comment"># 其中的元素为每个节点级注意力的输出，形状为(N, D*K)</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 将该列表在维度1堆叠，得到所有元路径的节点级注意力</span></span><br><span class="line">        <span class="comment"># 形状为(N, M, D * K)</span></span><br><span class="line">        semantic_embeddings = torch.stack(</span><br><span class="line">            semantic_embeddings, dim=<span class="number">1</span></span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 最终经过语义级注意力聚合不同元路径的表示，得到了该层的输出</span></span><br><span class="line">        <span class="comment"># 形状为(N, D * K)</span></span><br><span class="line">        <span class="keyword">return</span> self.semantic_attention(semantic_embeddings)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">HAN</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    参数：</span></span><br><span class="line"><span class="string">    meta_paths : 元路径，使用边类型列表表示</span></span><br><span class="line"><span class="string">    in_size : 输入大小（特征维度）</span></span><br><span class="line"><span class="string">    out_size : 输出大小（节点种类数）</span></span><br><span class="line"><span class="string">    num_heads : 多头注意力头数（列表形式，对应每层的头数）</span></span><br><span class="line"><span class="string">    dropout : dropout概率</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params"></span></span><br><span class="line"><span class="params">            self, meta_paths, in_size, hidden_size, out_size, num_heads, dropout</span></span><br><span class="line"><span class="params">    </span>):</span><br><span class="line">        <span class="built_in">super</span>(HAN, self).__init__()</span><br><span class="line"></span><br><span class="line">        self.layers = nn.ModuleList()</span><br><span class="line">        <span class="comment"># 第一个HAN层的输入输出需要单独定义</span></span><br><span class="line">        self.layers.append(</span><br><span class="line">            HANLayer(meta_paths, in_size, hidden_size, num_heads[<span class="number">0</span>], dropout)</span><br><span class="line">        )</span><br><span class="line">        <span class="comment"># 从第二个HAN层开始，每一个层的输入都是hidden_size * 上一个层的头数</span></span><br><span class="line">        <span class="comment"># 输出大小为 hidden_size * 当前层的头数</span></span><br><span class="line">        <span class="keyword">for</span> l <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="built_in">len</span>(num_heads)):</span><br><span class="line">            self.layers.append(</span><br><span class="line">                HANLayer(</span><br><span class="line">                    meta_paths,</span><br><span class="line">                    hidden_size * num_heads[l - <span class="number">1</span>],</span><br><span class="line">                    hidden_size,</span><br><span class="line">                    num_heads[l],</span><br><span class="line">                    dropout,</span><br><span class="line">                )</span><br><span class="line">            )</span><br><span class="line">        <span class="comment"># 最终的输出层</span></span><br><span class="line">        self.predict = nn.Linear(hidden_size * num_heads[-<span class="number">1</span>], out_size)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, g, h</span>):</span><br><span class="line">        <span class="keyword">for</span> gnn <span class="keyword">in</span> self.layers:</span><br><span class="line">            h = gnn(g, h)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> self.predict(h)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/" data-id="clnn4xjdv0002w0u27d153fi0" data-title="" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/10/12/PathNet/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/10/12/GraphSAGE%E5%AD%A6%E4%B9%A0/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/10/12/SUGRL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/SGNN/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/PathNet/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/HAN%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/10/12/GraphSAGE%E5%AD%A6%E4%B9%A0/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Wan Li<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
